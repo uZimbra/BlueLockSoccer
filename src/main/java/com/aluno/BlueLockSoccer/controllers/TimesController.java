@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -50,6 +51,17 @@ public class TimesController {
         }
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Time> findById(@PathVariable("id") Integer id) {
+        Optional<Time> time = timeRepository.findById(id);
+        if (time.isPresent()) {
+            return ResponseEntity.status(HttpStatus.OK).body(time.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
+
     @GetMapping
     public ResponseEntity<List<Time>> list() {
         var times = timeRepository.findAll();
@@ -59,6 +71,9 @@ public class TimesController {
             var totalDeVitorias = scoreTimeService.getTotalDeVitorias(time.getId());
             var totalDeEmpates = scoreTimeService.getTotalDeEmpates(time.getId());
             var totalDeDerrotas = scoreTimeService.getTotalDeDerrotas(time.getId());
+            var totalDeGolsPro = scoreTimeService.getTotalDeGolsPro(time.getId());
+            var totalDeGolsContra = scoreTimeService.getTotalDeGolsContra(time.getId());
+            var totalDeSaldoDeGols = scoreTimeService.getTotalDeSaldoDeGols(time.getId());
             var aproveitamento = scoreTimeService.getAproveitamento(totalDeVitorias, totalDeJogos, totalDeEmpates);
             var scoreTime = new ScoreTime();
             scoreTime.setTotalDePontos(totalDePontos);
@@ -66,6 +81,9 @@ public class TimesController {
             scoreTime.setTotalDeVitorias(totalDeVitorias);
             scoreTime.setTotalDeEmpates(totalDeEmpates);
             scoreTime.setTotalDeDerrotas(totalDeDerrotas);
+            scoreTime.setGolsPro(totalDeGolsPro);
+            scoreTime.setGolsContra(totalDeGolsContra);
+            scoreTime.setSaldoDeGols(totalDeSaldoDeGols);
             scoreTime.setAproveitamento(aproveitamento);
             time.setScoreTime(scoreTime);
             return time;

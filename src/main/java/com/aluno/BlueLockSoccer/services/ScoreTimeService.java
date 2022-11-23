@@ -105,6 +105,40 @@ public class ScoreTimeService {
         return totalDeDerrotas;
     }
 
+    public int getTotalDeGolsPro(Integer id) {
+        var partidas = partidaRepository.findAllByTime1OrTime2(id);
+        int totalDeGolsPro = 0;
+        for (Partida partida : partidas) {
+            var scorePartida = partida.getScorePartida();
+            if (partida.getTime1().getId().equals(id)) {
+                totalDeGolsPro += scorePartida.getGolsProTime1();
+            } else {
+                totalDeGolsPro += scorePartida.getGolsProTime2();
+            }
+        }
+        return totalDeGolsPro;
+    }
+
+    public int getTotalDeGolsContra(Integer id) {
+        var partidas = partidaRepository.findAllByTime1OrTime2(id);
+        int totalDeGolsContra = 0;
+        for (Partida partida : partidas) {
+            var scorePartida = partida.getScorePartida();
+            if (partida.getTime1().getId().equals(id)) {
+                totalDeGolsContra += scorePartida.getGolsContraTime1();
+            } else {
+                totalDeGolsContra += scorePartida.getGolsContraTime2();
+            }
+        }
+        return totalDeGolsContra;
+    }
+
+    public int getTotalDeSaldoDeGols(Integer id) {
+        var totalDeGolsPro = getTotalDeGolsPro(id);
+        var totalDeGolsContra = getTotalDeGolsContra(id);
+        return totalDeGolsPro - totalDeGolsContra;
+    }
+
     public String getAproveitamento(int totalDeVitorias, int totalDeJogos, int totalDeEmpates) {
         double result = 0;
         double totalDePontosDisputados = totalDeJogos * PONTOS_POR_PARTIDA_VENCIDA;

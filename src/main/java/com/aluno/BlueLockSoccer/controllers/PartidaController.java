@@ -38,7 +38,7 @@ public class PartidaController {
     @PostMapping
     public ResponseEntity<Partida> create(@RequestBody CreatePartidaDTO input) {
         try {
-            var scorePartida = scorePartidaRepository.save(new ScorePartida(null, 0, 0));
+            var scorePartida = scorePartidaRepository.save(new ScorePartida());
 
             var time1 = timeRepository.findById(input.getTime1Id());
             var time2 = timeRepository.findById(input.getTime2Id());

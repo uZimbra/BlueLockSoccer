@@ -4,11 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Data
 @Entity
@@ -20,10 +16,28 @@ public class ScorePartida {
     @GeneratedValue(strategy = GenerationType.AUTO)
     Integer id;
 
-    @Column
+    @Transient
     Integer scoreTime1;
+    public Integer getScoreTime1() {
+        return golsProTime1 + golsContraTime2;
+    }
+
+    @Transient
+    Integer scoreTime2;
+    public Integer getScoreTime2() {
+        return golsProTime2 + golsContraTime1;
+    }
 
     @Column
-    Integer scoreTime2;
+    Integer golsProTime1 = 0;
+
+    @Column
+    Integer golsContraTime1 = 0;
+
+    @Column
+    Integer golsProTime2 = 0;
+
+    @Column
+    Integer golsContraTime2 = 0;
 
 }
