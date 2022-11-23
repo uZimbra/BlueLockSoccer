@@ -8,7 +8,6 @@ import com.aluno.BlueLockSoccer.repositories.PartidaRepository;
 import com.aluno.BlueLockSoccer.repositories.ScorePartidaRepository;
 import com.aluno.BlueLockSoccer.repositories.TimeRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ReflectionUtils;
@@ -27,7 +26,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/partida")
+@RequestMapping("/partidas")
 @RequiredArgsConstructor
 public class PartidaController {
 
@@ -90,14 +89,17 @@ public class PartidaController {
     public ResponseEntity<Optional<Partida>> update(@PathVariable("id") Integer id, @RequestBody Map<Object, Object> fields) {
         var partida = partidaRepository.findById(id);
         if (partida.isPresent()) {
+            ScorePartida scorePartidaDB = partida.get().getScorePartida();
             fields.forEach((key, value) -> {
-                Field field = ReflectionUtils.findField(Partida.class, (String) key);
+                Field field = ReflectionUtils.findField(ScorePartida.class, (String) key);
                 assert field != null;
                 if (!field.getName().equals("id")) {
                     field.setAccessible(true);
                 }
-                ReflectionUtils.setField(field, partida.get(), value);
+                ReflectionUtils.setField(field, scorePartidaDB, value);
             });
+
+            partida.get().setScorePartida(scorePartidaDB);
 
             var result = Optional.of(partidaRepository.save(partida.get()));
 

@@ -55,8 +55,18 @@ public class TimesController {
         var times = timeRepository.findAll();
         List<Time> result = times.stream().map(time -> {
             var totalDePontos = scoreTimeService.getTotalDePontos(time.getId());
+            var totalDeJogos = scoreTimeService.getTotalDeJogos(time.getId());
+            var totalDeVitorias = scoreTimeService.getTotalDeVitorias(time.getId());
+            var totalDeEmpates = scoreTimeService.getTotalDeEmpates(time.getId());
+            var totalDeDerrotas = scoreTimeService.getTotalDeDerrotas(time.getId());
+            var aproveitamento = scoreTimeService.getAproveitamento(totalDeVitorias, totalDeJogos, totalDeEmpates);
             var scoreTime = new ScoreTime();
             scoreTime.setTotalDePontos(totalDePontos);
+            scoreTime.setTotalDeJogos(totalDeJogos);
+            scoreTime.setTotalDeVitorias(totalDeVitorias);
+            scoreTime.setTotalDeEmpates(totalDeEmpates);
+            scoreTime.setTotalDeDerrotas(totalDeDerrotas);
+            scoreTime.setAproveitamento(aproveitamento);
             time.setScoreTime(scoreTime);
             return time;
         }).collect(Collectors.toList());
