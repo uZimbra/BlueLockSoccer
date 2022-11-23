@@ -23,11 +23,13 @@ public class Partida {
     @GeneratedValue(strategy = GenerationType.AUTO)
     Integer id;
 
-    @Column
-    Integer codigoDoTime1;
+    @OneToOne
+    @JoinColumn(name = "time1Id")
+    Time time1;
 
-    @Column
-    Integer codigoDoTime2;
+    @OneToOne
+    @JoinColumn(name = "time2Id")
+    Time time2;
 
     @Column
     LocalDate dataDaPartida;

@@ -1,10 +1,13 @@
 package com.aluno.BlueLockSoccer.controllers;
 
 
+import com.aluno.BlueLockSoccer.controllers.dtos.CreatePartidaDTO;
 import com.aluno.BlueLockSoccer.models.Partida;
 import com.aluno.BlueLockSoccer.models.ScorePartida;
 import com.aluno.BlueLockSoccer.repositories.PartidaRepository;
 import com.aluno.BlueLockSoccer.repositories.ScorePartidaRepository;
+import com.aluno.BlueLockSoccer.repositories.TimeRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,28 +28,33 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/partida")
+@RequiredArgsConstructor
 public class PartidaController {
 
-    @Autowired
-    PartidaRepository partidaRepository;
+    final private PartidaRepository partidaRepository;
+    final private TimeRepository timeRepository;
+    final private ScorePartidaRepository scorePartidaRepository;
 
-    @Autowired
-    ScorePartidaRepository scorePartidaRepository;
 
     @PostMapping
-    public ResponseEntity<Partida> create(@RequestBody Partida partida) {
+    public ResponseEntity<Partida> create(@RequestBody CreatePartidaDTO input) {
         try {
             var scorePartida = scorePartidaRepository.save(new ScorePartida(null, 0, 0));
 
-            var newPartida = new Partida();
-            newPartida.setScorePartida(scorePartida);
-            newPartida.setCodigoDoTime1(partida.getCodigoDoTime1());
-            newPartida.setCodigoDoTime2(partida.getCodigoDoTime2());
-            newPartida.setDataDaPartida(partida.getDataDaPartida());
+            var time1 = timeRepository.findById(input.getTime1Id());
+            var time2 = timeRepository.findById(input.getTime2Id());
 
-            var savedPartida = partidaRepository.save(newPartida);
+            if (time1.isPresent() && time2.isPresent()) {
+                var newPartida = new Partida();
+                newPartida.setTime1(time1.get());
+                newPartida.setTime2(time2.get());
+                newPartida.setDataDaPartida(input.getDataDaPartida());
+                newPartida.setScorePartida(scorePartida);
 
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedPartida);
+                var savedPartida = partidaRepository.save(newPartida);
+                return ResponseEntity.status(HttpStatus.CREATED).body(savedPartida);
+            }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
@@ -70,9 +78,9 @@ public class PartidaController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Partida> findById(@PathVariable("id") Integer id) {
-        var notice = partidaRepository.findById(id);
-        if (notice.isPresent()) {
-            return ResponseEntity.ok().body(notice.get());
+        var partida = partidaRepository.findById(id);
+        if (partida.isPresent()) {
+            return ResponseEntity.ok().body(partida.get());
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
