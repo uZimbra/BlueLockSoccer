@@ -86,7 +86,7 @@ public class PartidaController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Optional<Partida>> update(@PathVariable("id") Integer id, @RequestBody Map<Object, Object> fields) {
+    public ResponseEntity<Partida> update(@PathVariable("id") Integer id, @RequestBody Map<Object, Object> fields) {
         var partida = partidaRepository.findById(id);
         if (partida.isPresent()) {
             ScorePartida scorePartidaDB = partida.get().getScorePartida();
@@ -101,7 +101,7 @@ public class PartidaController {
 
             partida.get().setScorePartida(scorePartidaDB);
 
-            var result = Optional.of(partidaRepository.save(partida.get()));
+            var result = partidaRepository.save(partida.get());
 
             return ResponseEntity.ok().body(result);
         }
