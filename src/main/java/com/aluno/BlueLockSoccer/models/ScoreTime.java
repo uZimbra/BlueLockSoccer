@@ -3,24 +3,41 @@ package com.aluno.BlueLockSoccer.models;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
+import javax.persistence.*;
+
 @Data
+@Entity
+@NoArgsConstructor
 public class ScoreTime {
-    Integer totalDePontos;
 
-    Integer totalDeJogos;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    Integer id;
 
-    Integer totalDeVitorias;
+    @Column
+    Integer totalDePontos = 0;
 
-    Integer totalDeEmpates;
+    @Column
+    Integer totalDeJogos = 0;
 
-    Integer totalDeDerrotas;
+    @Column
+    Integer totalDeVitorias = 0;
 
-    Integer golsPro;
+    @Column
+    Integer totalDeEmpates = 0;
 
-    Integer golsContra;
+    @Column
+    Integer totalDeDerrotas = 0;
 
-    Integer saldoDeGols;
+    @Column
+    Integer golsPro = 0;
 
-    String aproveitamento;
+    @Column
+    Integer golsContra = 0;
+
+    @Column
+    Integer saldoDeGols = 0;
+
+    @Column
+    String aproveitamento = "0,00%";
 }

@@ -4,6 +4,7 @@ package com.aluno.BlueLockSoccer.controllers;
 import com.aluno.BlueLockSoccer.controllers.dtos.CreateTimeDTO;
 import com.aluno.BlueLockSoccer.models.ScoreTime;
 import com.aluno.BlueLockSoccer.models.Time;
+import com.aluno.BlueLockSoccer.repositories.ScoreTimeRepository;
 import com.aluno.BlueLockSoccer.repositories.TimeRepository;
 import com.aluno.BlueLockSoccer.services.ScoreTimeService;
 import lombok.RequiredArgsConstructor;
@@ -27,13 +28,15 @@ import java.util.stream.Collectors;
 public class TimesController {
 
     final private TimeRepository timeRepository;
-    final private ScoreTimeService scoreTimeService;
+    final private ScoreTimeRepository scoreTimeRepository;
 
     @PostMapping
     public ResponseEntity<Time> create(@RequestBody CreateTimeDTO input) {
         try {
             var newTime = new Time();
+            var newScoreTime = scoreTimeRepository.save(new ScoreTime());
             newTime.setNome(input.getNome());
+            newTime.setScoreTime(newScoreTime);
             var savedTime = timeRepository.save(newTime);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedTime);
         } catch (Exception e) {

@@ -7,6 +7,7 @@ import com.aluno.BlueLockSoccer.models.ScorePartida;
 import com.aluno.BlueLockSoccer.repositories.PartidaRepository;
 import com.aluno.BlueLockSoccer.repositories.ScorePartidaRepository;
 import com.aluno.BlueLockSoccer.repositories.TimeRepository;
+import com.aluno.BlueLockSoccer.services.ScoreTimeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +34,8 @@ public class PartidaController {
     final private PartidaRepository partidaRepository;
     final private TimeRepository timeRepository;
     final private ScorePartidaRepository scorePartidaRepository;
+
+    final private ScoreTimeService scoreTimeService;
 
 
     @PostMapping
@@ -89,6 +92,7 @@ public class PartidaController {
     public ResponseEntity<Partida> update(@PathVariable("id") Integer id, @RequestBody Map<Object, Object> fields) {
         var partida = partidaRepository.findById(id);
         if (partida.isPresent()) {
+            // alterando score da partida...
             ScorePartida scorePartidaDB = partida.get().getScorePartida();
             fields.forEach((key, value) -> {
                 Field field = ReflectionUtils.findField(ScorePartida.class, (String) key);
@@ -102,6 +106,12 @@ public class PartidaController {
             partida.get().setScorePartida(scorePartidaDB);
 
             var result = partidaRepository.save(partida.get());
+
+            // alterando score do time...
+            var time1Id = partida.get().getTime1().getId();
+            var time2Id = partida.get().getTime2().getId();
+            scoreTimeService.updateScoreTime(time1Id);
+            scoreTimeService.updateScoreTime(time2Id);
 
             return ResponseEntity.ok().body(result);
         }

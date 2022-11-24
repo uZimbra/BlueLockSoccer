@@ -1,6 +1,5 @@
 package com.aluno.BlueLockSoccer.models;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -16,7 +15,6 @@ import java.time.LocalDate;
 @Data
 @Entity
 @NoArgsConstructor
-@AllArgsConstructor
 public class Partida {
 
     @Id
@@ -37,5 +35,4 @@ public class Partida {
     @OneToOne
     @JoinColumn(name = "scorePartidaId")
     ScorePartida scorePartida;
-
 }
