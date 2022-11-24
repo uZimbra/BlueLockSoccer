@@ -65,30 +65,7 @@ public class TimesController {
     @GetMapping
     public ResponseEntity<List<Time>> list() {
         var times = timeRepository.findAll();
-        List<Time> result = times.stream().map(time -> {
-            var totalDePontos = scoreTimeService.getTotalDePontos(time.getId());
-            var totalDeJogos = scoreTimeService.getTotalDeJogos(time.getId());
-            var totalDeVitorias = scoreTimeService.getTotalDeVitorias(time.getId());
-            var totalDeEmpates = scoreTimeService.getTotalDeEmpates(time.getId());
-            var totalDeDerrotas = scoreTimeService.getTotalDeDerrotas(time.getId());
-            var totalDeGolsPro = scoreTimeService.getTotalDeGolsPro(time.getId());
-            var totalDeGolsContra = scoreTimeService.getTotalDeGolsContra(time.getId());
-            var totalDeSaldoDeGols = scoreTimeService.getTotalDeSaldoDeGols(time.getId());
-            var aproveitamento = scoreTimeService.getAproveitamento(totalDeVitorias, totalDeJogos, totalDeEmpates);
-            var scoreTime = new ScoreTime();
-            scoreTime.setTotalDePontos(totalDePontos);
-            scoreTime.setTotalDeJogos(totalDeJogos);
-            scoreTime.setTotalDeVitorias(totalDeVitorias);
-            scoreTime.setTotalDeEmpates(totalDeEmpates);
-            scoreTime.setTotalDeDerrotas(totalDeDerrotas);
-            scoreTime.setGolsPro(totalDeGolsPro);
-            scoreTime.setGolsContra(totalDeGolsContra);
-            scoreTime.setSaldoDeGols(totalDeSaldoDeGols);
-            scoreTime.setAproveitamento(aproveitamento);
-            time.setScoreTime(scoreTime);
-            return time;
-        }).collect(Collectors.toList());
-        return ResponseEntity.status(HttpStatus.OK).body(result);
+        return ResponseEntity.status(HttpStatus.OK).body(times);
     }
 
 }
